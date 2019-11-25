@@ -47,16 +47,36 @@
 									<span>Add Interests</span>
 									<select id="addInterests" name="">
 										<option value=""></option>
-										<option value="AI">AI</option>
-										<option value="Biology">Biology</option>
-										<option value="Chemistry">Chemistry</option>
-										<option value="Physics">Physics</option>
-										<option value="Robotics">Robotics</option>
-										<option value="Astronomy">Astronomy</option>
-										<option value="Nature">Nature</option>
-										<option value="Archaeology">Archaeology</option>
-										<option value="History">History</option>
-										<option value="Health">Health</option>
+										<% if(!user.interests.includes("AI")){ %>
+											<option value="AI">AI</option>
+										<%}%>
+										<% if(!user.interests.includes("Biology")){ %>
+											<option value="Biology">Biology</option>
+										<%}%>
+										<% if(!user.interests.includes("Chemistry")){ %>
+											<option value="Chemistry">Chemistry</option>
+										<%}%>
+										<% if(!user.interests.includes("Physics")){ %>
+											<option value="Physics">Physics</option>
+										<%}%>
+										<% if(!user.interests.includes("Robotics")){ %>
+											<option value="Robotics">Robotics</option>
+										<%}%>
+										<% if(!user.interests.includes("Astronomy")){ %>
+											<option value="Astronomy">Astronomy</option>
+										<%}%>
+										<% if(!user.interests.includes("Nature")){ %>
+											<option value="Nature">Nature</option>
+										<%}%>
+										<% if(!user.interests.includes("Archaeology")){ %>
+											<option value="Archaeology">Archaeology</option>
+										<%}%>
+										<% if(!user.interests.includes("History")){ %>
+											<option value="History">History</option>
+										<%}%>
+										<% if(!user.interests.includes("Health")){ %>
+											<option value="Health">Health</option>
+										<%}%>
 									</select>
 
 									<span class="image main"><img src="<%=user.profileImg%>" alt="profile image" /></span>

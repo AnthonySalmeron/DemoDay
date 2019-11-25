@@ -5,11 +5,18 @@ module.exports= function(app,passport,db,ObjectId){
   app.get("/generic.ejs",(req,res)=>{
     res.render('generic.ejs')
   })
+  app.put('/Interests', (req,res)=>{
+    var uId = ObjectId(req.session.passport.user)
+    db.collection('users').findOneAndUpdate({"_id": uId},{$push:{interests: req.body.interest}}, (err, result) => {
+      if (err) return res.send(500, err)
+      res.send('Interest Added!')
+    })
+  })
   app.delete('/Interests', (req, res) => {
     var uId = ObjectId(req.session.passport.user)
     db.collection('users').findOneAndUpdate({"_id": uId},{$pull:{interests: req.body.interest}}, (err, result) => {
       if (err) return res.send(500, err)
-      res.send('Message deleted!')
+      res.send('Interest Deleted!')
     })
   })
   //LOGIN=====================================================================================================================
