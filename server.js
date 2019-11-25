@@ -8,6 +8,7 @@ var flash    = require('connect-flash');
 var morgan   = require('morgan');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
+var ObjectId = require('mongodb').ObjectID
 var db;
 var configDB = require('./config/database.js');
 var port     = process.env.PORT || 4000;
@@ -30,6 +31,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db);
+  require('./app/routes.js')(app, passport, db, ObjectId);
 });
 app.listen(port);
+console.log(`Listening on port ${port}`)
