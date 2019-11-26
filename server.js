@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient
+const path = require('path')
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -9,6 +10,7 @@ var morgan   = require('morgan');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 var ObjectId = require('mongodb').ObjectID
+var multer = require('multer')
 var db;
 var configDB = require('./config/database.js');
 var port     = process.env.PORT || 4000;
@@ -31,7 +33,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db, ObjectId);
+  require('./app/routes.js')(app, passport, db, multer, ObjectId, path);
 });
 app.listen(port);
 console.log(`Listening on port ${port}`)

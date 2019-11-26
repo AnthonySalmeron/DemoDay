@@ -1,6 +1,8 @@
-module.exports= function(app,passport,db,ObjectId){
+module.exports= function(app,passport,db,multer,ObjectId, path){
   app.get('/',(req,res)=>{
-    res.render('index.ejs')
+    res.render('index.ejs',{
+      user:req.user
+    })
   })
   app.get("/generic.ejs",(req,res)=>{
     res.render('generic.ejs')
@@ -19,6 +21,67 @@ module.exports= function(app,passport,db,ObjectId){
       res.send('Interest Deleted!')
     })
   })
+  // var storages = multer.diskStorage({
+  //   destination: (req, file, cb) => {
+  //     cb(null, 'public/uploads')
+  //   },
+  //   filename: (req, file, cb) => {
+  //     var fileName = file.originalname.match(/[\w+]+\./g).join("").slice(0,-1)//grabs just the filename and not the extension
+  //     cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
+  //   }
+  // });
+  // var uploads = multer({
+  //   storage: storages,
+  //   limits: {fileSize: 5000000}
+  // });
+  // app.post('/uploads', uploads.fields([{name:'text',maxCount:1},{name:'replacePic',maxCount:1}]),(req,res)=>{
+  //   console.log(req.files)
+  //   res.redirect('/profile')
+  // })
+  //IMG UPLOAD==================================================================================================================
+  var storage = multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, 'public/images')
+      },
+      filename: (req, file, cb) => {
+        var fileName = file.originalname.match(/[\w+]+\./g).join("").slice(0,-1)//grabs just the filename and not the extension
+        cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
+      }
+  });
+  var upload = multer({
+    storage: storage,
+    limits: {fileSize: 5000000}
+  });
+  app.post('/upload', upload.single('replacePic'), (req, res, next) => {
+
+      insertDocuments(db, req, 'images/' + req.file.filename, () => {
+          //db.close();
+          //res.json({'message': 'File uploaded successfully'});
+          res.redirect('/profile')
+      });
+  });
+  var insertDocuments = function(db, req, filePath, callback) {
+      var collection = db.collection('users');
+      var uId = ObjectId(req.session.passport.user)
+      collection.findOneAndUpdate({"_id": uId}, {
+        $set: {
+          profileImg: filePath
+        }
+      }, {
+        sort: {_id: -1},
+        upsert: false
+      }, (err, result) => {
+        if (err) return res.send(err)
+        callback(result)
+      })
+      // collection.findOne({"_id": uId}, (err, result) => {
+      //     //{'imagePath' : filePath }
+      //     //assert.equal(err, null);
+      //     callback(result);
+      // });
+  }
+
+  //END IMG UPLOAD=============================================================================================================
   //LOGIN=====================================================================================================================
   app.get('/profile', isLoggedIn, function(req, res) {
       db.collection('uploads').find().toArray((err, result) => {
