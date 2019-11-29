@@ -27,3 +27,9 @@ document.getElementById("addInterests").onchange =function(){
     window.location.reload()
   })
 }
+
+  // fetch('test.txt')
+  // .then(res=>res.text())
+  // .then(res=>{
+  //   document.getElementById('whereTextGoes').innerHTML = res;
+  // })

@@ -79,10 +79,53 @@
 										<%}%>
 									</select>
 
-									<span class="image main"><img src="<%=user.profileImg%>" alt="profile image" /></span>
-									<form enctype="multipart/form-data" action="/upload" method="post">
-										<input type="file" name="text" accept="text/plain,application/pdf" value="">
-										<input type="file" accept="image/jpeg,image/x-png,image/gif" name="replacePic" value="">
+									<span class="image main"><img src="<%=user.uploads[user.uploads.length-1][0]%>" alt="profile image" /></span>
+									<p id="whereTextGoes"></p>
+									<form enctype="multipart/form-data" id="uploading"  action="/upload" method="post">
+										<input type="text" name="description" placeholder="Write a title here"required>
+										<span>
+											<input type="checkbox" id="AI" value="AI" name="keys">
+											<label for="AI">AI</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Biology" value="Biology" name="keys">
+											<label for="Biology">Biology</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Chemistry" value="Chemistry" name="keys">
+											<label for="Chemistry">Chemistry</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Physics" value="Physics" name="keys">
+											<label for="Physics">Physics</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Robotics" value="Robotics" name="keys">
+											<label for="Robotics">Robotics</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Astronomy" value="Astronomy" name="keys">
+											<label for="Astronomy">Astronomy</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Nature" value="Nature" name="keys">
+											<label for="Nature">Nature</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Archaeology" value="Archaeology" name="keys">
+											<label for="Archaeology">Archaeology</label>
+										</span>
+										<span>
+											<input type="checkbox" id="History" value="History" name="keys">
+											<label for="History">History</label>
+										</span>
+										<span>
+											<input type="checkbox" id="Biology" value="Biology" name="keys">
+											<label for="Biology">Biology</label>
+										</span>
+										<section><input type="file" name="article" required accept="text/plain" value="">
+										<input type="file" required accept="image/jpeg,image/x-png,image/gif" name="article" value=""></section>
+										<input type="text" name="author" placeholder="Author" required>
 										<button type="submit" name="button">Submit</button>
 									</form>
 
@@ -131,38 +174,42 @@
 									</header>
 									<ul>
 										<li><a href="/">Homepage</a></li>
-										<li><a href="generic.ejs">Article Template</a></li>
+										<li><a href="/profile">Control Center</a></li>
+										<li><a href="generic.ejs">Popular</a></li>
 										<li><a href="elements.html">Elements</a></li>
 										<li>
-											<span class="opener">Submenu</span>
+											<span class="opener">Physical Sciences</span>
 											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
+												<li><a href="#">Biology</a></li>
+												<li><a href="#">Chemistry</a></li>
+												<li><a href="#">Physics</a></li>
 											</ul>
 										</li>
-										<li><a href="#">Etiam Dolore</a></li>
-										<li><a href="#">Adipiscing</a></li>
 										<li>
-											<span class="opener">Another Submenu</span>
+											<span class="opener">Tech</span>
 											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
+												<li><a href="#">AI</a></li>
+												<li><a href="#">Robotics</a></li>
 											</ul>
 										</li>
-										<li><a href="#">Maximus Erat</a></li>
-										<li><a href="#">Sapien Mauris</a></li>
-										<li><a href="#">Amet Lacinia</a></li>
+										<li>
+											<span class="opener">Discovery</span>
+											<ul>
+												<li><a href="#">Archaeology</a></li>
+												<li><a href="#">Nature</a></li>
+												<li><a href="#">History</a></li>
+												<li><a href="#">Astronomy</a></li>
+											</ul>
+										</li>
+										<li><a href="#">Health</a></li>
 									</ul>
 								</nav>
+								<!-- <a href="test.txt" download="proposed_file_name">Download</a> -->
 
 							<!-- Section -->
 								<section>
 									<header class="major">
-										<h2>Ante interdum</h2>
+										<h2>Editor's Picks</h2>
 									</header>
 									<div class="mini-posts">
 										<article>

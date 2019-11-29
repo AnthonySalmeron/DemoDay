@@ -11,9 +11,9 @@ var userSchema = mongoose.Schema({
         firstname    : String,
         lastname     : String
     },
-    profileImg       : String,
+    uploads          : Array,
     interests        : [String],
-    visitationLog    : Array 
+    visitationLog    : Array
 });
 
 // generating a hash
