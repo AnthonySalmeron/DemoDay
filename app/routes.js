@@ -1,4 +1,5 @@
-module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3){
+module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3, multerAzure){
+  let azuConf = require('../config/azureConfig.js')// required for storage
   app.get('/',(req,res)=>{
     res.render('index.ejs',{
       user:req.user
@@ -23,6 +24,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3){
   })
 
   //FILE UPLOAD==================================================================================================================
+  //LOCAL STORAGE OPTION
   // var storage = multer.diskStorage({
   //     destination: (req, file, cb) => {
   //       cb(null, 'public/uploads')
@@ -32,61 +34,72 @@ module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3){
   //       cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
   //     }
   // });
+  // AMAZON STORAGE OPTION (bugged)
+  // var upload = multer({
+  //   storage: multerS3({
+  //   s3: s3,
+  //   bucket: 'science-docs-articles',
+  //   key: function (req, file, cb) {
+  //     console.log('key is working',file)
+  //     var fileName = file.originalname.match(/[\w+]+\./g).join("").slice(0,-1)//grabs just the filename and not the extension
+  //     cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
+  //   }
+  // })
+  // });
   var upload = multer({
-    storage: multerS3({
-    s3: s3,
-    bucket: 'science-docs-articles',
-    key: function (req, file, cb) {
-      console.log('key is working',file,s3)
+  storage: multerAzure({
+    connectionString: azuConf.connectionString, //Connection String for azure storage account, this one is prefered if you specified, fallback to account and key if not.
+    account: azuConf.account, //The name of the Azure storage account
+    key: azuConf.key, //A key listed under Access keys in the storage account pane
+    container: azuConf.container,  //Any container name, it will be created if it doesn't exist
+    blobPathResolver: function(req, file, cb){
       var fileName = file.originalname.match(/[\w+]+\./g).join("").slice(0,-1)//grabs just the filename and not the extension
-      cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
+          cb(null, fileName + '-' + (Date.now()*Math.random()) + path.extname(file.originalname))
     }
   })
-  });
+})
   app.post('/upload', upload.array('article',2), (req, res, next) => {
     //  console.log(req.files, req.body.description, req.body.keys, req.user.local.firstname)
-    console.log(req.files)
-    res.redirect('/profile')
-      // require('../js/insertDocuments.js')(db, req, 'uploads/' + req.files[0].filename,'uploads/' + req.files[1].filename, () => {
-      //     //db.close();
-      //     //res.json({'message': 'File uploaded successfully'});
-      //     res.redirect('/profile')
-      // });
+      insertDocuments(db, req, () => {
+          res.redirect('/profile')
+      });
   });
-  // var insertDocuments = function(db, req, fileTxt,fileImg ,callback) {
-  //     var collection = db.collection('users');
-  //     var collectionTwo = db.collection('proposals');
-  //     var uId = ObjectId(req.session.passport.user)
-  //     var newDoc;
-  //      collectionTwo.insertOne({
-  //       fileNamePic : req.files[0].originalname,
-  //       fileNameTxt : req.files[1].originalname,
-  //       picLocation : fileImg,
-  //       txtLocation : fileTxt,
-  //       title       : req.body.description,
-  //       keywords    : req.body.keys,
-  //       popularity  : 1,
-  //       author      : req.body.author,
-  //       uploader    : uId
-  //     },(err,result)=>{
-  //       if (err) console.log(err)
-  //     //  console.log(result.insertedId)
-  //     //  console.log(uId)
-  //       newDoc = result.insertedId //trying to get id of returned object
-  //       collection.findOneAndUpdate({"_id": uId}, {
-  //         $push: {
-  //           uploads: [fileImg,fileTxt,req.body.description, newDoc]
-  //         }
-  //       }, {
-  //         sort: {_id: -1},
-  //         upsert: false
-  //       }, (err, result) => {
-  //         if (err) return res.send(err)
-  //         callback(result)
-  //       })
-  //     })
-  //
-  // }
+  var insertDocuments = function(db, req,callback) {
+      var collection = db.collection('users');
+      var collectionTwo = db.collection('proposals');
+      var uId = ObjectId(req.session.passport.user)
+      var newDoc;
+       collectionTwo.insertOne({
+         fileNamePic : req.files[1].originalname,
+         fileNameTxt : req.files[0].originalname,
+         picLocation : req.files[1].url,
+         txtLocation : req.files[0].url,
+         picBlob     : req.files[1].blobPath,
+         txtBlob     : req.files[0].blobPath,
+         title       : req.body.description,
+         keywords    : req.body.keys,
+         popularity  : 1,
+         author      : req.body.author,
+         uploader    : uId
+      },(err,result)=>{
+        if (err) console.log(err)
+      //  console.log(result.insertedId)
+      //  console.log(uId)
+        newDoc = result.insertedId //trying to get id of returned object
+        collection.findOneAndUpdate({"_id": uId}, {
+          $push: {
+            uploads: [req.files[1].url,req.files[0].url,req.body.description, newDoc]
+          }
+        }, {
+          sort: {_id: -1},
+          upsert: false
+        }, (err, result) => {
+          if (err) return res.send(err)
+          callback(result)
+        })
+      })
+
+  }
 
   //END FILE UPLOAD=============================================================================================================
   //LOGIN=====================================================================================================================

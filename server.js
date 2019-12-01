@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient
 const path = require('path')
-const multerS3 = require('multer-s3')
-const aws = require('aws-sdk')
+const multerS3 = require('multer-s3')//not needed, included as an option
+const aws = require('aws-sdk')// not needed, included as an option
 const awsConfig = require('./config/awsConfig.js')
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -14,10 +14,11 @@ const cookieParser = require('cookie-parser');
 const session      = require('express-session');
 const ObjectId = require('mongodb').ObjectID
 const multer = require('multer')
+const multerAzure = require('multer-azure')
 var db;
 const configDB = require('./config/database.js');
 const port     = process.env.PORT || 4000;
-const s3 = new aws.S3({
+const s3 = new aws.S3({//not needed
   accessKeyID    : awsConfig.accessKeyID,
   secretAccessKey: awsConfig.secretAccessKey,
   region         : awsConfig.region,
@@ -42,7 +43,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 mongoose.connect(configDB.url, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db, multer, ObjectId, path, s3, multerS3 );
+  require('./app/routes.js')(app, passport, db, multer, ObjectId, path, s3, multerS3, multerAzure );
 });
 app.listen(port);
 console.log(`Listening on port ${port}`)

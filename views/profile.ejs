@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
-	<body class="is-preload">
+	<body onload="loader()" class="is-preload">
 
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -78,9 +78,8 @@
 											<option value="Health">Health</option>
 										<%}%>
 									</select>
-
 									<span class="image main"><img src="<%=user.uploads[user.uploads.length-1][0]%>" alt="profile image" /></span>
-									<p id="whereTextGoes"></p>
+									<img width=400 src="https://sciencedoc.blob.core.windows.net/science/Capture-362538646643.70526.PNG" alt="">
 									<form enctype="multipart/form-data" id="uploading"  action="/upload" method="post">
 										<input type="text" name="description" placeholder="Write a title here"required>
 										<span>
@@ -135,8 +134,8 @@
 
 									<hr class="major" />
 
-									<h2>Interdum sed dapibus</h2>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit.</p>
+									<h2 id="thisone"><%=user.uploads[2][2]%></h2>
+									<p id="whereTextGoes">Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit.</p>
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fersapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique lorem ipsum dolor.</p>
 
 									<hr class="major" />
@@ -204,7 +203,7 @@
 										<li><a href="#">Health</a></li>
 									</ul>
 								</nav>
-								<!-- <a href="test.txt" download="proposed_file_name">Download</a> -->
+								<!-- <a href="https://sciencedoc.blob.core.windows.net/science/pic01-1575057053414.jpg" download="proposed_file_name">Download</a> -->
 
 							<!-- Section -->
 								<section>
