@@ -1,5 +1,4 @@
-module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3, multerAzure){
-  let azuConf = require('../config/azureConfig.js')// required for storage
+module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf,axios){
   app.get('/',(req,res)=>{
     res.render('index.ejs',{
       user:req.user
@@ -80,7 +79,8 @@ module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3, mu
          keywords    : req.body.keys,
          popularity  : 1,
          author      : req.body.author,
-         uploader    : uId
+         uploader    : uId,
+         dateUploaded: moment().format('YYYY MM DD')
       },(err,result)=>{
         if (err) console.log(err)
       //  console.log(result.insertedId)
@@ -98,13 +98,115 @@ module.exports= function(app,passport,db,multer,ObjectId, path, s3, multerS3, mu
           callback(result)
         })
       })
+    }
+    //HERE WE ARE CHECKING TO SEE IF A PROPOSAL SHOULD BE SENT THROUGH
+    const subscription_key =  azuConf.subscription_key;
+    const endpoint = azuConf.endpoint;
+    const creds = new CognitiveServicesCredentials.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': subscription_key } });
+    const textAnalyticsClient = new TextAnalyticsAPIClient.TextAnalyticsClient(creds, endpoint);
+    app.post('/review',function(req,res){
+      res.render('profile.ejs', {
+        user : req.user //render the page because we don't need to wait for this to finish
+      })
+      let favorability, keyphrases;
+      async function sentimentAnalysis(client){
+        const input = {
+          documents: [
+              { language: "en", id: "1", text: req.body.review}
+            ]
+          };
+        const sentimentResult = await client.sentiment({
+          multiLanguageBatchInput: input
+        });
+        const keyPhraseResult = await client.keyPhrases({
+          multiLanguageBatchInput: input
+        });
+        keyPhrases = keyPhraseResult.documents[0].keyPhrases;
+        favorability = sentimentResult.documents[0].score;
+        // console.log(keyPhraseResult.documents);
+        // console.log(sentimentResult.documents);
+        console.log(req.body.location)
+        console.log(favorability);
 
-  }
+        db.collection('proposals').findOneAndDelete({txtLocation:req.body.location},(err,result)=>{
+          if (err) console.log(err)
+          console.log(result.value)
+          if(favorability<=0.6){
+            const {
+              Aborter,
+              BlobURL,
+              BlockBlobURL,
+              ContainerURL,
+              ServiceURL,
+              StorageURL,
+              SharedKeyCredential,//this is the authentication we're using
+              AnonymousCredential,//optional
+              TokenCredential//optional
+            } = require("@azure/storage-blob");//remember to download version 10, 12 as of this writing doesn't support deleting blobs and the methods here are deprecated
+            async function main(){
+              const account = azuConf.account
+              const accountKey = azuConf.key
+              const credentials = new SharedKeyCredential(account, accountKey);
+              const pipeline = StorageURL.newPipeline(credentials);
+              const serviceURL = new ServiceURL(`https://${account}.blob.core.windows.net`, pipeline);
+              const blobName1 = result.value.txtBlob;
+              const blobname2 = result.value.picBlob;
+              const containerName = azuConf.container;
+              const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
+              const blockBlobURL1 = BlockBlobURL.fromContainerURL(containerURL, blobName1);
+              const blockBlobURL2 = BlockBlobURL.fromContainerURL(containerURL, blobName2);
+              const aborter = Aborter.timeout(60000)//requests are given a minute to execute
+              await blockBlobURL1.delete(aborter)
+              await blockBlobURL2.delete(aborter)
+              console.log(`Block blob "${blobName1}" is deleted`);
+            }
+            main()
+            .then(() => {
+              console.log("Successfully executed sample.");
+            })
+            .catch(err => {
+              console.log(err.message);
+            });
+            //Can use axios but prefere to use npm packages instead for above task
+            // let axiosConfig = {
+            //   headers : {
+            //     Authorization :,
+            //     'x-ms-date':Date.now(),
+            //     'x-ms-version': 2019-02-02
+            //   }
+            //   axios.all([
+            //     axios.delete(result.value.txtLocation,axiosConfig)
+            //     axios.delete(result.value.picLocation,axiosConfig)
+            //   ])
+            //   .then(axios.spread((res1,res2)=>{
+            //
+            //   }))
+            //   .catch(err=>{
+            //     console.log(err)
+            //   })
+          }else if(favorability>0.6){
+              db.collection('peer-reviewed').insertOne(result.value,(err,res)=>{
+                if (err) console.log(err);
+                console.log(res);
+                db.collection('peer-reviewed').findOneAndUpdate({_id:res.insertedId},{
+                  $push: {mlKeywords:{ $each: keyPhrases }}
+                },(err,resu)=>{
+                  if (err) console.log(err)
+                  console.log('all done')
+                })//adding to the array which holds machine learning keywords
+              })//adding the deleted document to the peer-reviewed group
+            }//else statement that runs if favorability is >.6
+        })//overall operation that first deletes the document for the article that was reviewed
+      }//end of sentimentAnalysis()
+      //call the above function
+      sentimentAnalysis(textAnalyticsClient)
+    })//end of app.post for review
 
   //END FILE UPLOAD=============================================================================================================
   //LOGIN=====================================================================================================================
   app.get('/profile', isLoggedIn, function(req, res) {
-      db.collection('proposals').find().limit(5).toArray((err, result) => {
+
+      db.collection('proposals').find({keywords:{$in:req.user.interests}, uploader:{ $ne: req.user._id }}).limit(5).toArray((err, result) => {
         if (err) return console.log(err)
         res.render('profile.ejs', {
           user : req.user,

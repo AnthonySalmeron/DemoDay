@@ -26,31 +26,28 @@ document.getElementById("addInterests").onchange =function(){
   }).then(function (response) {
     window.location.reload()
   })
-}
-function loader(){
-  console.log(document.getElementById("thisone").textContent)
-}
-// EXAMPLE CODE FOR FETCHING DATA FROM BLOBS, ONLY NECESSARY FOR AJAX
-  fetch('https://sciencedoc.blob.core.windows.net/science/test-1424978755516.1873.txt')
-  // Retrieve its body as ReadableStream
-  .then(res=> res.body.getReader())
-  .then(res=>res.read())
-  .then(function processText({ done, value }) {
-    let chunk = value
-    //data comes in as Uint8Array so this decoder makes it english
-    let utf8Decoder= new TextDecoder('utf-8')
 
-    // Result objects contain two properties:
-    // done  - true if the stream has already given you all its data.
-    // the reader can be called recursively if it continues to stream data
-    // value - some data. Always undefined when done is true.
-    // if (done) {
-    //   console.log("Stream complete");
-      document.getElementById('whereTextGoes').textContent = utf8Decoder.decode(chunk);
-      return;
-    // }
-})
-//STUFF BELOW IS MAINLY FOR IMAGES BUT CAN BE USED FOR OTHER FILE FORMATS THAT NEED A URL TOO
+// EXAMPLE CODE FOR FETCHING DATA FROM BLOBS, ONLY NECESSARY FOR AJAX
+//   fetch('https://sciencedoc.blob.core.windows.net/science/test-1424978755516.1873.txt')
+//   // Retrieve its body as ReadableStream
+//   .then(res=> res.body.getReader())
+//   .then(res=>res.read())
+//   .then(function processText({ done, value }) {
+//     let chunk = value
+//     //data comes in as Uint8Array so this decoder makes it english
+//     let utf8Decoder= new TextDecoder('utf-8')
+//
+//     // Result objects contain two properties:
+//     // done  - true if the stream has already given you all its data.
+//     // the reader can be called recursively if it continues to stream data
+//     // value - some data. Always undefined when done is true.
+//     // if (done) {
+//     //   console.log("Stream complete");
+//       document.getElementById('whereTextGoes').textContent = utf8Decoder.decode(chunk);
+//       return;
+//     // }
+// })
+//CODE BELOW IS MAINLY FOR IMAGES BUT CAN BE USED FOR OTHER FILE FORMATS THAT NEED A URL TOO
   // .then(res=> console.log(res.read()))
   // .then(response => response.body)
   // .then(rs => {
