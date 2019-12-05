@@ -1,9 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>Repo</title>
@@ -21,16 +16,7 @@
 						<div class="inner">
 
 							<!-- Header -->
-								<header id="header">
-									<a href="/" class="logo"><strong>Repo</strong> by Anthony Salmeron</a>
-									<ul class="icons">
-										<li><a href="https://github.com/AnthonySalmeron" class="icon brands fa-github"><span class="label">Github</span></a></li>
-										<li><a href="https://twitter.com/AnthonySalmeron" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="https://www.linkedin.com/in/anthony-salmeron-685527193/" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-										<li><a href="https://angel.co/anthony-salmeron-1" class="icon brands fa-angellist"><span class="label">AngelList</span></a></li>
-										<li><a href="logout" class="icon brands fa-id"> Log Out<span class="label">LOGOUT</span></a></li>
-									</ul>
-								</header>
+								<%- include('header'); %>
 
 							<!-- Content -->
 								<section>
@@ -78,8 +64,7 @@
 											<option value="Health">Health</option>
 										<%}%>
 									</select>
-									<span class="image main"><img src="<%=user.uploads[user.uploads.length-1][0]%>" alt="profile image" /></span>
-									<img width=400 src="https://sciencedoc.blob.core.windows.net/science/Capture-362538646643.70526.PNG" alt="">
+
 	               <% if(typeof remaining !=='undefined'&&remaining.length>0)	{ %>
 									<form action="/review" method="post">
 										<h3>To gain access to uploading, read this article and review it for scientific integrity</h3>
@@ -139,114 +124,20 @@
 										<input type="text" name="author" placeholder="Author" required>
 										<button type="submit" name="button">Submit</button>
 									</form>
-
-								<% if(remaining.length>0) {%>
-
-									<hr class="major"/>
-
-									<h2><%=user.uploads[i][2]%></h2>
-									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit.</p>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fersapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique lorem ipsum dolor.</p>
+									<h2>Your current articles pending review</h2>
+								<% if(typeof list != 'undefined') {%>
+								 <%for(let i =0;i<list.length;i++){ %>
+										<hr class="major"/>
+										<h2><%=list[i].title%></h2>
+										<embed  src=<%=list[i].txtLocation%> width="300" height="300">
+									<%}%>
 								<%}%>
 								</section>
 
 						</div>
 					</div>
 
-				<!-- Sidebar -->
-					<div id="sidebar">
-						<div class="inner">
-
-							<!-- Search -->
-								<section id="search" class="alt">
-									<form method="post" action="#">
-										<input type="text" name="query" id="query" placeholder="Search" />
-									</form>
-								</section>
-
-							<!-- Menu -->
-								<nav id="menu">
-									<header class="major">
-										<h2>Menu</h2>
-									</header>
-									<ul>
-										<li><a href="/">Homepage</a></li>
-										<li><a href="/profile">Control Center</a></li>
-										<li><a href="generic.ejs">Popular</a></li>
-										<li><a href="elements.html">Elements</a></li>
-										<li>
-											<span class="opener">Physical Sciences</span>
-											<ul>
-												<li><a href="#">Biology</a></li>
-												<li><a href="#">Chemistry</a></li>
-												<li><a href="#">Physics</a></li>
-											</ul>
-										</li>
-										<li>
-											<span class="opener">Tech</span>
-											<ul>
-												<li><a href="#">AI</a></li>
-												<li><a href="#">Robotics</a></li>
-											</ul>
-										</li>
-										<li>
-											<span class="opener">Discovery</span>
-											<ul>
-												<li><a href="#">Archaeology</a></li>
-												<li><a href="#">Nature</a></li>
-												<li><a href="#">History</a></li>
-												<li><a href="#">Astronomy</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Health</a></li>
-									</ul>
-								</nav>
-								<!-- <a href="https://sciencedoc.blob.core.windows.net/science/pic01-1575057053414.jpg" download="proposed_file_name">Download</a> -->
-
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Miscellaneous</h2>
-									</header>
-									<div class="mini-posts">
-										<article>
-											<a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic08.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic09.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-									</div>
-									<ul class="actions">
-										<li><a href="#" class="button">More</a></li>
-									</ul>
-								</section>
-
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Get in touch</h2>
-									</header>
-									<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-									<ul class="contact">
-										<li class="icon solid fa-envelope"><a href="mailto:anthonysalmerondev@gmail.com">anthonysalmerondev@gmail.com</a></li>
-										<li class="icon solid fa-phone">Company Phone: (617)-209-9182</li>
-										<li class="icon solid fa-home">Boston, MA</li>
-									</ul>
-								</section>
-
-							<!-- Footer -->
-								<footer id="footer">
-									<p class="copyright">&copy; Repo. All rights reserved. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
-								</footer>
-
-						</div>
-					</div> <!--end of sidebar-->
+				<%- include('sidebar'); %>
 
 			</div>
 

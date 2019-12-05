@@ -26,6 +26,7 @@ document.getElementById("addInterests").onchange =function(){
   }).then(function (response) {
     window.location.reload()
   })
+}
 
 // EXAMPLE CODE FOR FETCHING DATA FROM BLOBS, ONLY NECESSARY FOR AJAX
 //   fetch('https://sciencedoc.blob.core.windows.net/science/test-1424978755516.1873.txt')

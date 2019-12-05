@@ -81,7 +81,11 @@ input, select, textarea {
 	body {
 		-ms-overflow-style: scrollbar;
 	}
-
+	.getText {
+		height: 10em;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 	@media screen and (max-width: 480px) {
 
 		html, body {

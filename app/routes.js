@@ -1,11 +1,50 @@
 module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf,axios){
   app.get('/',(req,res)=>{
-    res.render('index.ejs',{
-      user:req.user
-    })
+    if('user' in req){
+      db.collection('peer-reviewed').find().sort({popularity:-1}).limit(7).toArray(function(err,result){
+        if (err) console.log(err)
+        res.render('index.ejs',{
+          articles: result,
+          user:req.user
+        })
+      })
+    }else{
+      db.collection('peer-reviewed').find().sort({popularity:-1}).limit(7).toArray(function(err,result){
+        if (err) console.log(err)
+        res.render('index.ejs',{
+          articles: result
+        })
+      })
+    }
   })
-  app.get("/generic.ejs",(req,res)=>{
-    res.render('generic.ejs')
+  app.get("/search",(req,res)=>{
+    if('id' in req.query){
+      let arId = ObjectId(req.query.id)
+      db.collection('peer-reviewed').find({_id:arId}).toArray(function(err,result){
+        if (err) console.log(err)
+        res.render('generic.ejs',{
+          text:result,
+          user: req.user
+        })
+      })
+      db.collection('peer-reviewed').findOneAndUpdate({_id:arId}, {
+          $inc: {
+            popularity: 1
+          }
+        }, (err, result) => {
+          if (err) return console.log(err)
+          console.log('updated popularity of search item')
+        }
+      )
+    }else if('category' in req.query){
+      db.collection('peer-reviewed').find({keywords:req.query.category}).sort({popularity:-1}).limit(11).toArray(function(err,result){
+        if (err) console.log(err)
+        res.render('generic.ejs',{
+          text:result,
+          user: req.user
+        })
+      })
+    }
   })
   app.put('/Interests', (req,res)=>{
     var uId = ObjectId(req.session.passport.user)
@@ -53,7 +92,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
     container: azuConf.container,  //Any container name, it will be created if it doesn't exist
     blobPathResolver: function(req, file, cb){
       var fileName = file.originalname.match(/[\w+]+\./g).join("").slice(0,-1)//grabs just the filename and not the extension
-          cb(null, fileName + '-' + (Date.now()*Math.random()) + path.extname(file.originalname))
+          cb(null, fileName + '-' + Math.round(Date.now()*Math.random()) + path.extname(file.originalname))
     }
   })
 })
@@ -143,24 +182,31 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
               AnonymousCredential,//optional
               TokenCredential//optional
             } = require("@azure/storage-blob");//remember to download version 10, 12 as of this writing doesn't support deleting blobs and the methods here are deprecated
-            async function main(){
+            async function main(blobName){
               const account = azuConf.account
               const accountKey = azuConf.key
               const credentials = new SharedKeyCredential(account, accountKey);
               const pipeline = StorageURL.newPipeline(credentials);
               const serviceURL = new ServiceURL(`https://${account}.blob.core.windows.net`, pipeline);
-              const blobName1 = result.value.txtBlob;
-              const blobname2 = result.value.picBlob;
+              // const blobName1 = result.value.txtBlob;
+              // const blobname2 = result.value.picBlob;
               const containerName = azuConf.container;
               const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName);
-              const blockBlobURL1 = BlockBlobURL.fromContainerURL(containerURL, blobName1);
-              const blockBlobURL2 = BlockBlobURL.fromContainerURL(containerURL, blobName2);
+              const blockBlobURL = BlockBlobURL.fromContainerURL(containerURL, blobName);
+              // const blockBlobURL2 = BlockBlobURL.fromContainerURL(containerURL, blobName2);
               const aborter = Aborter.timeout(60000)//requests are given a minute to execute
-              await blockBlobURL1.delete(aborter)
-              await blockBlobURL2.delete(aborter)
-              console.log(`Block blob "${blobName1}" is deleted`);
+              await blockBlobURL.delete(aborter)
+              // await blockBlobURL2.delete(aborter)
+              console.log(`Block blob "${blobName}" is deleted`);
             }
-            main()
+            main(result.value.txtBlob)
+            .then(() => {
+              console.log("Successfully executed sample.");
+            })
+            .catch(err => {
+              console.log(err.message);
+            });
+            main(result.value.picBlob)
             .then(() => {
               console.log("Successfully executed sample.");
             })
@@ -204,15 +250,20 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
 
   //END FILE UPLOAD=============================================================================================================
   //LOGIN=====================================================================================================================
-  app.get('/profile', isLoggedIn, function(req, res) {
-
-      db.collection('proposals').find({keywords:{$in:req.user.interests}, uploader:{ $ne: req.user._id }}).limit(5).toArray((err, result) => {
-        if (err) return console.log(err)
-        res.render('profile.ejs', {
-          user : req.user,
-          remaining: result
-        })
+  app.get('/profile', isLoggedIn, async function(req, res) {
+    let list;
+    await db.collection('proposals').find({uploader:req.user._id}).toArray((err,res)=>{
+      if (err) console.log(err)
+      list = res;
+    })
+    db.collection('proposals').find({keywords:{$in:req.user.interests}, uploader:{ $ne: req.user._id }}).limit(5).toArray((err, result) => {
+      if (err) return console.log(err)
+      res.render('profile.ejs', {
+        user : req.user,
+        remaining: result,
+        list: list
       })
+    })
   });
 
   // LOGOUT ==============================
