@@ -20,10 +20,12 @@
 								<%- include('header'); %>
 
 							<!-- Content -->
+							<%if(text.length>0){%>
 								<section>
 									<header class="main">
 										<a href='\search?id=<%=text[0]._id%>'>
 											<h1><%=text[0].title%></h1>
+											<h2>by <%=text[0].author%></h2>
 										</a>
 										<% if(text.length==1){%>
 											<a class="button" download='<%=text[0].fileNameTxt%>' href=<%=text[0].txtLocation%>>Download</a>
@@ -40,6 +42,7 @@
 												<img src=<%=text[i].picLocation%> alt="" />
 											</a>
 											<h3><%=text[i].title%></h3>
+											<h4><%=text[i].author%></h4>
 											<p class="getText"><%=text[i].txtLocation%></p>
 											<ul class="actions">
 												<li><a href='\search?id=<%=text[i]._id%>' class="button">More</a></li>
@@ -48,7 +51,9 @@
 									<%}%>
 								<%}%>
 								</section>
-
+								<%}else{%>
+									<h2>No results for your query</h2>
+								<%}%>	
 						</div>
 					</div>
 

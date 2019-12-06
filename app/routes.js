@@ -1,4 +1,4 @@
-module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf,axios){
+module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf, Fuse){
   app.get('/',(req,res)=>{
     if('user' in req){
       db.collection('peer-reviewed').find().sort({popularity:-1}).limit(7).toArray(function(err,result){
@@ -39,6 +39,33 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
     }else if('category' in req.query){
       db.collection('peer-reviewed').find({keywords:req.query.category}).sort({popularity:-1}).limit(11).toArray(function(err,result){
         if (err) console.log(err)
+        res.render('generic.ejs',{
+          text:result,
+          user: req.user
+        })
+      })
+    }else{
+      db.collection('peer-reviewed').find().toArray(function(err,resu){
+        if (err) console.log(err)
+        console.log(resu)
+        var options = {
+          shouldSort: true,//sorted by match
+          includeScore: true,//score for threshold
+          threshold: 0.6,//amount of leeway to match by, closer to 0 is exact matches
+          location: 0,//specifies a spot in the string you can start search from
+          distance: 100,//specifies how many characters in total they can be wrong by
+          maxPatternLength: 32,
+          minMatchCharLength: 1,
+          keys: [
+            "title",
+            "keywords",
+            "author",
+            'dateUploaded'
+          ]
+        };
+        var fuse = new Fuse(resu, options); // "resu" is the item array
+        var result = fuse.search(req.query.search);
+        result = result.map(el=> el.item);
         res.render('generic.ejs',{
           text:result,
           user: req.user
