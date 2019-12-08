@@ -33,8 +33,20 @@
 									</header>
 
 									<span class="image main"><img src=<%=text[0].picLocation%> alt="picture for the article" /></span>
-
+								<% if(text.length==1 &&typeof user != "undefined"){%>
+									<%if(Array.isArray(text[0].keywords)){%>
+										<%for(let j =0;j< text[0].keywords.length;j++){%>
+												<p class="keez" style="display:none;"><%=text[0].keywords[j]%></p>
+										<%}%>
+									<%}else{%>
+										<p class="keez" style="display:none;"><%=text[0].keywords%></p>
+									<%}%>
+									<!-- this script is used to keep track of the amount of time spent reading an article -->
+									<script src="assets/js/userListener.js"></script>
 									<p style="overflow:inherit;" class="getText"><%=text[0].txtLocation%></p>
+								<%}else{%>
+									<p class="getText"><%=text[0].txtLocation%></p>
+								<%}%>
 								<% if (text.length>1){ %>
 									<%for(let i =1; i<text.length;i++){ %>
 										<article>
@@ -53,7 +65,7 @@
 								</section>
 								<%}else{%>
 									<h2>No results for your query</h2>
-								<%}%>	
+								<%}%>
 						</div>
 					</div>
 

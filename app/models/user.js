@@ -13,7 +13,18 @@ var userSchema = mongoose.Schema({
     },
     uploads          : Array,
     interests        : [String],
-    visitationLog    : Array
+    visitationLog    : {
+        AI           : Number,
+        Biology      : Number,
+        Chemistry    : Number,
+        Physics      : Number,
+        Robotics     : Number,
+        Astronomy    : Number,
+        Nature       : Number,
+        Archaeology  : Number,
+        History      : Number,
+        Health       : Number
+    }
 });
 
 // generating a hash

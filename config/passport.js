@@ -62,8 +62,21 @@ module.exports = function(passport) {
                 newUser.local.password = newUser.generateHash(password); // use the generateHash function in our user model
                 newUser.local.firstname = req.body.firstname;
                 newUser.local.lastname = req.body.lastname;
-                newUser.uploads = [["images/pic08.jpg","test.txt"]];
+                newUser.uploads = [];
                 newUser.interests = req.body.interests;
+                newUser.visitationLog.AI =0;
+                newUser.visitationLog.Biology=0;
+                newUser.visitationLog.Chemistry=0;
+                newUser.visitationLog.Physics=0;
+                newUser.visitationLog.Robotics=0;
+                newUser.visitationLog.Astronomy=0;
+                newUser.visitationLog.Nature=0;
+                newUser.visitationLog.Archaeology=0;
+                newUser.visitationLog.History=0;
+                newUser.visitationLog.Health=0;
+
+
+
 				// save the user
                 newUser.save(function(err) {
                     if (err)

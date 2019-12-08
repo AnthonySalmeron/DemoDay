@@ -80,6 +80,26 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
       res.send('Interest Added!')
     })
   })
+  app.put('/visits',(req,res)=>{
+    var uId = ObjectId(req.session.passport.user)
+    db.collection('users').findOneAndUpdate({"_id": uId},{
+      $inc:{
+        "visitationLog.AI": req.body.AI,
+        "visitationLog.Biology": req.body.Biology,
+        "visitationLog.Chemistry": req.body.Chemistry,
+        "visitationLog.Physics": req.body.Physics,
+        "visitationLog.Robotics": req.body.Robotics,
+        "visitationLog.Astronomy": req.body.Astronomy,
+        "visitationLog.Nature": req.body.Nature,
+        "visitationLog.Archaeology": req.body.Archaeology,
+        "visitationLog.History": req.body.History,
+        "visitationLog.Health": req.body.Health
+      }
+    }, (err, result) => {
+      if (err) return res.send(500, err)
+      console.log('updated log');
+    })
+  })
   app.delete('/Interests', (req, res) => {
     var uId = ObjectId(req.session.passport.user)
     db.collection('users').findOneAndUpdate({"_id": uId},{$pull:{interests: req.body.interest}}, (err, result) => {
