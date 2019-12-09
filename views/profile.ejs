@@ -4,6 +4,7 @@
 		<title>Repo</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="shortcut icon" href="images/favicon.png">
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
 		<script data-ad-client="ca-pub-7921974018894239" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -70,6 +71,7 @@
 	               <% if(typeof remaining !=='undefined'&&remaining.length>0)	{ %>
 									<form action="/review" method="post">
 										<h3>To gain access to uploading, read this article and review it for scientific integrity</h3>
+										<h4><%=remaining[0].title%></h4>
 										<input type="text" name="location" style="visibility:hidden;" value=<%=remaining[0].txtLocation%>>
 										<p style="overflow:scroll;" class="getText"><%=remaining[0].txtLocation%></p>
 										<a class="button icon solid fa-download" download="peerReview" href=<%=remaining[0].txtLocation%>>Or download it</a>
