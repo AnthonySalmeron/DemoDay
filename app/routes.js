@@ -1,7 +1,8 @@
 module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf, Fuse){
   app.get('/',(req,res)=>{
     if('user' in req){
-      db.collection('peer-reviewed').find().sort({popularity:-1}).limit(7).toArray(function(err,result){
+      let sortedKeys = Object.entries(req.user.visitationLog).sort((a,b)=>b[1]-a[1])//sort from greatest to smallest value
+      db.collection('peer-reviewed').find({keywords:{$in:[sortedKeys[0][0],sortedKeys[1][0],sortedKeys[2][0]]}}).sort({popularity:-1}).limit(7).toArray(function(err,result){
         if (err) console.log(err)
         res.render('index.ejs',{
           articles: result,
@@ -119,7 +120,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
   //       cb(null, fileName + '-' + Date.now() + path.extname(file.originalname))
   //     }
   // });
-  // AMAZON STORAGE OPTION (bugged)
+  // AMAZON STORAGE OPTION //(bugged)
   // var upload = multer({
   //   storage: multerS3({
   //   s3: s3,
@@ -144,7 +145,8 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
   })
 })
   app.post('/upload', upload.array('article',2), (req, res, next) => {
-    //  console.log(req.files, req.body.description, req.body.keys, req.user.local.firstname)
+     console.log(req.files)
+     console.log(req.body.hello)
       insertDocuments(db, req, () => {
           res.redirect('/profile')
       });
@@ -166,7 +168,8 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
          popularity  : 1,
          author      : req.body.author,
          uploader    : uId,
-         dateUploaded: moment().format('YYYY MM DD')
+         dateUploaded: moment().format('YYYY MM DD'),
+         mlKeywords  : req.body.mls
       },(err,result)=>{
         if (err) console.log(err)
       //  console.log(result.insertedId)
@@ -263,7 +266,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
             //Can use axios but prefere to use npm packages instead for above task
             // let axiosConfig = {
             //   headers : {
-            //     Authorization :,
+            //     Authorization :,//add Authorization scheme here
             //     'x-ms-date':Date.now(),
             //     'x-ms-version': 2019-02-02
             //   }

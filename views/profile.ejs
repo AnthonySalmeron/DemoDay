@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
 	</head>
 	<body class="is-preload">
 
@@ -120,10 +121,18 @@
 											<label for="Health">Health</label>
 										</span>
 										<section><input type="file" name="article" required accept="text/plain" value="">
-										<input type="file" required accept="image/jpeg,image/x-png,image/gif" name="article" value=""></section>
+										<input id="imageToUpload" type="file" required accept="image/jpeg,image/x-png,image/gif" name="article" value=""></section>
 										<input type="text" name="author" placeholder="Author" required>
+										<input class="mL" id="ml1" type="checkbox" name="mls" disabled>
+										<label id="lb1" for="ml1">MLKey1</label>
+										<input class="mL" id="ml2" type="checkbox" name="mls" disabled>
+										<label id="lb2" for="ml2">MLKey2</label>
+										<input class="mL" id="ml3" type="checkbox" name="mls" disabled>
+										<label id="lb3" for="ml3">MLKey3</label>
 										<button type="submit" name="button">Submit</button>
 									</form>
+									<img width="50%" id="uploadedImage" src="" alt="image to check">
+									<p>The MobileNet model labeled this as <span id="result">...</span> with a confidence of <span id="probability">...</span>.</p>
 									<h2>Your current articles pending review</h2>
 								<% if(typeof list != 'undefined') {%>
 								 <%for(let i =0;i<list.length;i++){ %>
