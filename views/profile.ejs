@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+		<script data-ad-client="ca-pub-7921974018894239" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 	</head>
 	<body class="is-preload">
 
@@ -32,7 +33,7 @@
 										<%}%>
 									</select>
 									<span>Add Interests</span>
-									<select id="addInterests" name="">
+									<select style="margin-bottom:5%;" id="addInterests" name="">
 										<option value=""></option>
 										<% if(!user.interests.includes("AI")){ %>
 											<option value="AI">AI</option>
@@ -70,13 +71,14 @@
 									<form action="/review" method="post">
 										<h3>To gain access to uploading, read this article and review it for scientific integrity</h3>
 										<input type="text" name="location" style="visibility:hidden;" value=<%=remaining[0].txtLocation%>>
-										<embed style="display:block" src=<%=remaining[0].txtLocation%> height="200" width="100%">
-										<a download="peerReview" href=<%=remaining[0].txtLocation%>>Or download it</a>
+										<p style="overflow:scroll;" class="getText"><%=remaining[0].txtLocation%></p>
+										<a class="button icon solid fa-download" download="peerReview" href=<%=remaining[0].txtLocation%>>Or download it</a>
 										<textarea name="review" rows="8" cols="80" maxlength="1000" required placeholder="Write your review here (1000 character limit)"></textarea>
 										<button type="submit" name="button">Submit</button>
 									</form>
 									<form enctype="multipart/form-data" id="uploading" style='display:none;'  action="/upload" method="post">
 									<%}else{%>
+											<h3>Make an entry here</h3>
 											<form enctype="multipart/form-data" id="uploading" action="/upload" method="post">
 										<%}%>
 										<input type="text" name="description" placeholder="Write a title here"required>
@@ -120,8 +122,8 @@
 											<input type="checkbox" id="Health" value="Health" name="keys">
 											<label for="Health">Health</label>
 										</span>
-										<section><input type="file" name="article" required accept="text/plain" value="">
-										<input id="imageToUpload" type="file" required accept="image/jpeg,image/x-png,image/gif" name="article" value=""></section>
+										<section><input type="file" name="article" required accept="text/plain" >
+										<input id="imageToUpload" type="file" required accept="image/jpeg,image/x-png,image/gif" name="article" ></section>
 										<input type="text" name="author" placeholder="Author" required>
 										<input class="mL" id="ml1" type="checkbox" name="mls" disabled>
 										<label id="lb1" for="ml1">MLKey1</label>
