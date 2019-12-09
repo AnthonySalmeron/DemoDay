@@ -1,4 +1,4 @@
-module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf, Fuse){
+module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf, Fuse, nodemailer,mail){
   app.get('/',(req,res)=>{
     if('user' in req){
       let sortedKeys = Object.entries(req.user.visitationLog).sort((a,b)=>b[1]-a[1])//sort from greatest to smallest value
@@ -61,7 +61,8 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
             "title",
             "keywords",
             "author",
-            'dateUploaded'
+            'dateUploaded',
+            "mlKeywords"
           ]
         };
         var fuse = new Fuse(resu, options); // "resu" is the item array
@@ -99,6 +100,34 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
     }, (err, result) => {
       if (err) return res.send(500, err)
       console.log('updated log');
+    })
+  })
+  app.post('/random', (req,res)=>{
+    db.collection('peer-reviewed').aggregate([{$sample:{size:1}}]).toArray(function(err,result){
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: mail.email,
+          pass: mail.pass
+        }
+      });
+      console.log(result)
+      let mailOptions = {
+        from: mail.email,
+        to: req.user.local.email,
+        subject: 'Nodemailer - Test',
+        text: 'Wooohooo it works!!',
+        attachments: [
+          { filename: result[0].fileNameTxt, path: result[0].txtLocation}
+        ]
+      };
+      transporter.sendMail(mailOptions, (err, data) => {
+        if (err) {
+            return console.log('Error occurs');
+        }
+        return console.log('Email sent!!!');
+      });
+      res.redirect('/profile')
     })
   })
   app.delete('/Interests', (req, res) => {

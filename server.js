@@ -19,6 +19,8 @@ const CognitiveServicesCredentials = require("@azure/ms-rest-js");
 const TextAnalyticsAPIClient = require("@azure/cognitiveservices-textanalytics");
 const moment = require('moment')
 const Fuse = require('fuse.js')
+const nodemailer= require('nodemailer')
+const mail = require('./config/mailer.js')
 // const axios = require('axios') //can be used to do for making requests from the server, optional
 var db;
 const azuConf = require('./config/azureConfig.js')// required for storage
@@ -50,7 +52,7 @@ app.use(require('prerender-node')); //used for seo because this website uses a l
 mongoose.connect(configDB.url, {useNewUrlParser: true, useUnifiedTopology:true}, (err, database) => {
   if (err) return console.log(err)
   db = database
-  require('./app/routes.js')(app, passport, db, multer, ObjectId, path,multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf,Fuse);
+  require('./app/routes.js')(app, passport, db, multer, ObjectId, path,multerAzure,CognitiveServicesCredentials,TextAnalyticsAPIClient,moment,azuConf,Fuse,nodemailer,mail);
 });
 app.listen(port);
 console.log(`Listening on port ${port}`)

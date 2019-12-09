@@ -138,11 +138,13 @@
 								 <%for(let i =0;i<list.length;i++){ %>
 										<hr class="major"/>
 										<h2><%=list[i].title%></h2>
-										<embed  src=<%=list[i].txtLocation%> width="300" height="300">
+										<p class="getText"><%=list[i].txtLocation%></p>
 									<%}%>
 								<%}%>
 								</section>
-
+								<form action="random" method="post">
+									<button type="submit" name="button">Get random article emailed</button>
+								</form>
 						</div>
 					</div>
 
@@ -156,6 +158,7 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="assets/js/index.js"></script>
 			<script src="assets/js/profileMain.js" charset="utf-8"></script>
 	</body>
 </html>
