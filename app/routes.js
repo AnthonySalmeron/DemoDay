@@ -98,7 +98,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
         "visitationLog.Health": req.body.Health
       }
     }, (err, result) => {
-      if (err) return res.send(500, err)
+      if (err) return res.status(500).send(err)
       console.log('updated log');
     })
   })
