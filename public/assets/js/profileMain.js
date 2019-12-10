@@ -1,4 +1,4 @@
-const mobileNet =  ml5.imageClassifier('MobileNet',()=> alert('model is ready'))
+const mobileNet = ml5.imageClassifier('MobileNet',()=> document.querySelector(".loader").style.display="none")
 document.getElementById('deleteInterests').onchange = function(){
   var toDelete = document.getElementById("deleteInterests").value
   fetch('Interests', {
