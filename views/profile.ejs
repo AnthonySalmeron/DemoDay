@@ -24,7 +24,7 @@
 							<!-- Content -->
 								<section>
 									<header class="main">
-										<div class="loader"></div>
+										<div style="display:none;" class="loader"></div>
 										<h1>Welcome <%=user.local.firstname%>!</h1>
 									</header>
 									<span>Delete interests</span>
@@ -81,6 +81,7 @@
 									</form>
 									<form enctype="multipart/form-data" id="uploading" style='display:none;'  action="/upload" method="post">
 									<%}else{%>
+											<script src="assets/js/test.js" charset="utf-8"></script>
 											<h3>Make an entry here</h3>
 											<form enctype="multipart/form-data" id="uploading" action="/upload" method="post">
 										<%}%>
