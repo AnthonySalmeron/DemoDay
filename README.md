@@ -1,5 +1,5 @@
 # DemoDay
-link: https://sheltered-ridge-28038.herokuapp.com/
+Link: https://sheltered-ridge-28038.herokuapp.com/
 ![home page](public/images/Capture.PNG)
 # Installation
 
