@@ -18,6 +18,9 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
       })
     }
   })
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //SEARCH
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
   app.get("/search",(req,res)=>{
     if('id' in req.query){
       let arId = ObjectId(req.query.id)
@@ -180,6 +183,9 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
           res.redirect('/profile')
       });
   });
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //DATABASE DOCUMENT GENERATION FOR UPLOADED ARTICLE
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
   var insertDocuments = function(db, req,callback) {
       var collection = db.collection('users');
       var collectionTwo = db.collection('proposals');
@@ -230,7 +236,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
       async function sentimentAnalysis(client){
         const input = {
           documents: [
-              { language: "en", id: "1", text: req.body.review}
+              { language: "en", id: "1", text: req.body.review}//this is where the text goes in to get analyzed
             ]
           };
         const sentimentResult = await client.sentiment({
@@ -243,13 +249,13 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
         favorability = sentimentResult.documents[0].score;
         // console.log(keyPhraseResult.documents);
         // console.log(sentimentResult.documents);
-        console.log(req.body.location)
+        console.log(req.body.location)//hidden element in ejs that's used to find the document for the article under review
         console.log(favorability);
 
         db.collection('proposals').findOneAndDelete({txtLocation:req.body.location},(err,result)=>{
           if (err) console.log(err)
           console.log(result.value)
-          if(favorability<=0.6){
+          if(favorability<=0.6){//favorability returns a score between 0-1, 1 being the most favorable
             const {
               Aborter,
               BlobURL,
@@ -260,7 +266,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
               SharedKeyCredential,//this is the authentication we're using
               AnonymousCredential,//optional
               TokenCredential//optional
-            } = require("@azure/storage-blob");//remember to download version 10, 12 as of this writing doesn't support deleting blobs and the methods here are deprecated
+            } = require("@azure/storage-blob");//remember to download version 10, v12 as of this writing doesn't support deleting blobs and the methods here are deprecated
             async function main(blobName){
               const account = azuConf.account
               const accountKey = azuConf.key
@@ -278,6 +284,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
               // await blockBlobURL2.delete(aborter)
               console.log(`Block blob "${blobName}" is deleted`);
             }
+            //calling the delete operation on the txt file in storage
             main(result.value.txtBlob)
             .then(() => {
               console.log("Successfully executed sample.");
@@ -285,6 +292,7 @@ module.exports= function(app,passport,db,multer,ObjectId, path, multerAzure,Cogn
             .catch(err => {
               console.log(err.message);
             });
+            //same operation but for the picture
             main(result.value.picBlob)
             .then(() => {
               console.log("Successfully executed sample.");
